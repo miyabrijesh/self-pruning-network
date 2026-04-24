@@ -26,9 +26,9 @@ python self_pruning_network_v4.py --epochs 15 --lambdas 1.0 5.0 20.0
 
 ## Run in Google Colab
 
-Open the notebook: [`self_pruning_network.ipynb`](./self_pruning_network.ipynb)
+Open the notebook: [`final.ipynb`](.final.ipynb)
 
-Or click here → [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/miyabrijesh/self-pruning-network/blob/main/self_pruning_network.ipynb)
+Or click here → [![Open In Colab](https://colab.research.google.com/drive/1RgZ63NorEZ_oEitab34wBJvXftISi7WX?usp=sharing)
 
 ---
 
