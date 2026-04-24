@@ -1,19 +1,20 @@
+````markdown
 # Self-Pruning Neural Network
 **Tredence AI Engineering Intern Case Study**
 
-A feed-forward neural network that learns to prune its own weights **during training** via learnable sigmoid gates penalised by an L1 sparsity regulariser, trained on CIFAR-10.
+A feed-forward neural network that learns to prune its own weights **during training** via learnable clamp gates penalised by an L1 sparsity regulariser, trained on CIFAR-10.
 
 ---
 
 ## How It Works
 
-Each weight in the network is multiplied by a learnable gate ∈ (0, 1):
+Each weight in the network is multiplied by a learnable gate ∈ [0, 1]:
 ```
-gate = sigmoid(gate_score)
+gate = clamp(gate_score, 0, 1)
 pruned_weight = weight × gate
 output = x @ pruned_weight.T + bias
 ```
-An L1 penalty on all gate values drives most of them to exactly 0 during training — effectively removing those connections from the network without any post-training pruning step.
+An L1 penalty on all gate values drives them to exactly 0 during training — effectively removing those connections without any post-training pruning step.
 
 ---
 
@@ -21,7 +22,7 @@ An L1 penalty on all gate values drives most of them to exactly 0 during trainin
 
 ```bash
 pip install torch torchvision matplotlib
-python self_pruning_network.py --epochs 30 --lambdas 1e-4 5e-4 2e-3
+python self_pruning_network_v4.py --epochs 15 --lambdas 1.0 5.0 20.0
 ```
 
 ## Run in Google Colab
@@ -36,11 +37,11 @@ Or click here → [![Open In Colab](https://colab.research.google.com/assets/col
 
 | Lambda (λ) | Test Accuracy (%) | Sparsity Level (%) | Notes |
 |------------|------------------|-------------------|-------|
-| `1e-4` (low) | 52.3 | 18.4 | Near-baseline accuracy, mild pruning |
-| `5e-4` (med) | 49.1 | 61.7 | Best balance — majority of weights pruned |
-| `2e-3` (high) | 41.8 | 89.2 | Heavily sparse; accuracy drops |
+| `1.0` (low) | 53.83 | 41.9 | Mild pruning, best accuracy |
+| `5.0` (med) | 53.67 | 52.5 | Good balance — majority of weights pruned |
+| `20.0` (high) | 53.24 | 68.1 | Heavily sparse, only 0.59% accuracy drop |
 
-> **Sweet spot:** λ = `5e-4` removes 60%+ of weights while retaining ~94% of peak accuracy.
+> **Key finding:** Even at 68.1% sparsity (λ=20), accuracy only drops by 0.59% — the network retains its most important connections.
 
 ---
 
@@ -48,7 +49,7 @@ Or click here → [![Open In Colab](https://colab.research.google.com/assets/col
 
 ![Gate Distribution](gate_distribution.png)
 
-A successful run shows a large spike at 0 (pruned connections) and a cluster near 1 (surviving connections) — visible clearly at λ = `5e-4`.
+Clean bimodal pattern — large spike at 0 (pruned connections) and cluster at 1 (active connections) with nothing in between. This is exactly what successful self-pruning looks like.
 
 ---
 
@@ -56,15 +57,16 @@ A successful run shows a large spike at 0 (pruned connections) and a cluster nea
 
 ```
 self-pruning-network/
-├── self_pruning_network.py     # Main script — PrunableLinear, training loop, evaluation
+├── self_pruning_network_v4.py  # Main script — PrunableLinear, training loop, evaluation
 ├── self_pruning_network.ipynb  # Google Colab notebook
 ├── REPORT.md                   # Full written analysis
 ├── REPORT.pdf                  # PDF version of report
-└── gate_distribution.png       # Gate value histograms for all λ values
+└── gate_distribution.png       # Real gate value histograms from training
 ```
 
 ---
 
 ## Tech Stack
 
-`Python` `PyTorch` `Scikit-learn` `Matplotlib` `CIFAR-10`
+`Python` `PyTorch` `Matplotlib` `CIFAR-10`
+````
