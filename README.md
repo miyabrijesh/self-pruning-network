@@ -46,7 +46,7 @@ Or click here → [![Open In Colab](https://colab.research.google.com/assets/col
 
 ## Gate Distribution
 
-![Gate Distribution](https://raw.githubusercontent.com/miyabrijesh/self-pruning-network/main/gate_distribution.png)
+![Gate Distribution](gate_distribution-2.png)
 
 Clean bimodal pattern — large spike at 0 (pruned connections) and cluster at 1 (active connections) with nothing in between. This is exactly what successful self-pruning looks like.
 
