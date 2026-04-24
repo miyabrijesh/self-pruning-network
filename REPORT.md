@@ -56,7 +56,7 @@ Pruning threshold: gate < 0.01.
 
 The histogram below shows gate values after training for each λ.
 
-![Gate Distribution](gate_distribution.png)
+![Gate Distribution](gate_distribution-2.png)
 
 **Reading the plots:**
 - A **large spike at 0** means many connections have been pruned — the gate is hard-zeroed.
@@ -69,6 +69,7 @@ For `λ = 20.0`: dominant spike at 0, small surviving cluster at 1 — accuracy 
 
 The perfectly bimodal pattern across all three runs is the hallmark of **successful self-pruning**: the network has learned which connections to keep and eliminated the rest.
 
+Note: Clamp is used instead of sigmoid to allow exact zero pruning.
 ---
 
 ## 4. Code Architecture Summary
@@ -121,3 +122,9 @@ loss.backward()
 assert layer.weight.grad is not None      # ✓
 assert layer.gate_scores.grad is not None # ✓
 ```
+## Key Idea
+
+Each weight is multiplied by a learnable gate:
+gate = clamp(gate_score, 0, 1)
+
+**Note:** Clamp gating was used instead of sigmoid to enable exact zero pruning and measurable sparsity.
